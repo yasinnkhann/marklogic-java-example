@@ -7,10 +7,10 @@ import com.marklogic.client.io.StringHandle;
 public class HelloWorld {
 	public static void main(String[] args) {
 		// Get the database client
-		DatabaseClient client = DB.getInstance();
+		DatabaseClient db = DB.getInstance();
 
 		// Make a document manager to work with text files.
-		TextDocumentManager docMgr = client.newTextDocumentManager();
+		TextDocumentManager docMgr = db.newTextDocumentManager();
 
 		// Define a URI value for a document.
 		String docId = "/example/text.txt";
@@ -26,7 +26,7 @@ public class HelloWorld {
 		docMgr.write(docId, handle);
 
 		// release the client
-		client.release();
+		db.release();
 
 	}
 }

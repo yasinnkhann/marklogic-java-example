@@ -1,30 +1,29 @@
 package com.yasin;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.document.DocumentPatchBuilder;
 import com.marklogic.client.document.JSONDocumentManager;
-import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.client.io.marker.DocumentPatchHandle;
 
 public class UpdateJSON {
     public static void main(String[] args) {
         DatabaseClient db = DB.getInstance();
 
-    // create a JSON document manager
-        JSONDocumentManager docMgr = db.newJSONDocumentManager();
+        // create a JSON document manager
+        JSONDocumentManager JSONDocMgr = db.newJSONDocumentManager();
 
-    // read the JSON document from the database
+        // create a document patch builder
+        DocumentPatchBuilder jsonPatchBldr = JSONDocMgr.newPatchBuilder();
+
+        // build a patch to update the "message" field
+        DocumentPatchHandle jsonPatch = jsonPatchBldr
+                .replaceValue("/message", "Greetings, again!")
+                .build();
+
+        // apply the patch to the document
         String docId = "/example/greet.json";
-        JacksonHandle handle = new JacksonHandle();
-        docMgr.read(docId, handle);
+        JSONDocMgr.patch(docId, jsonPatch);
 
-    // update the JSON data
-        ObjectMapper mapper = new ObjectMapper();
-        ObjectNode newJson = mapper.createObjectNode();
-        newJson.put("message", "Greetings, again!!!");
-
-    // write the updated JSON object to the database
-        docMgr.write(docId, new JacksonHandle(newJson));
         db.release();
     }
 }
